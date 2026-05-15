@@ -46,20 +46,14 @@ function listItemL1BoldValue(numId, label, value) {
   return `<w:p>${PARA_PR_L1(numId)}${boldRun(label)}${normalRun(' ' + value)}</w:p>`;
 }
 
-function listItemL1Plain(numId, text) {
-  return `<w:p>${PARA_PR_L1(numId)}${normalRun(text)}</w:p>`;
-}
-
 function buildAtividadesBloco(data) {
   const parts = [];
 
-  // 1. Objetivos
   parts.push(sectionHeader('1', 'Objetivos do Mês'));
   (data.objetivos || '').split('\n').filter(Boolean).forEach(line => {
     parts.push(`<w:p>${PARA_PR_L0(7)}${normalRun(line)}</w:p>`);
   });
 
-  // 2. Atividades por semana
   parts.push(para(boldRun('2. Atividades Desenvolvidas:')));
   (data.semanas || []).forEach((s, i) => {
     parts.push(listItemL0Bold(8, `Semana ${i + 1}:`));
@@ -68,7 +62,6 @@ function buildAtividadesBloco(data) {
     if (s.resultados) parts.push(listItemL1BoldValue(8, 'Resultados:', s.resultados));
   });
 
-  // 3. Desafios
   parts.push(para(boldRun('3. Desafios Enfrentados:')));
   (data.desafios || []).forEach(d => {
     if (d.titulo) parts.push(listItemL1BoldValue(9, 'Desafio:', d.titulo));
@@ -76,19 +69,17 @@ function buildAtividadesBloco(data) {
     if (d.solucao) parts.push(listItemL1BoldValue(9, 'Solução:', d.solucao));
   });
 
-  // 4. Conclusão
   parts.push(para(boldRun('4. Conclusão:')));
   (data.conclusao || '').split('\n').filter(Boolean).forEach(line => {
     parts.push(para(normalRun(line)));
   });
 
-  // 5. Próximos Passos
   parts.push(para(boldRun('5. Próximos Passos:')));
   (data.proximosPassos || []).forEach(p => {
     if (p) parts.push(`<w:p>${PARA_PR_L0(7)}${normalRun(p)}</w:p>`);
   });
 
-  return parts.join('\n          ');
+  return parts.join('\n');
 }
 
 async function buildDocx(data) {
@@ -120,15 +111,12 @@ export default async function handler(req, res) {
   try {
     const data = req.body;
 
-    // Build docx
     const docxBuffer = await buildDocx(data);
 
-    // Filename
     const safeName = (data.nome || 'bolsista').replace(/\s+/g, '_');
     const safeMes = (data.mesano || '').replace('-', '_');
     const filename = `relatorio_${safeName}_${safeMes}.docx`;
 
-    // Send email via Gmail SMTP
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
@@ -137,9 +125,14 @@ export default async function handler(req, res) {
       },
     });
 
+    const recipients = ['gestao@nutes.ufpe.br'];
+    if (data.emailCopia && data.emailCopia.trim()) {
+      recipients.push(data.emailCopia.trim());
+    }
+
     await transporter.sendMail({
       from: `"Plataforma mareIA" <${process.env.GMAIL_USER}>`,
-      to: 'bruno.pires@nutes.ufpe.br',
+      to: recipients.join(', '),
       subject: `Relatório Mensal — ${data.nome || 'Bolsista'} — ${data.mesano || ''}`,
       text: `Relatório mensal de ${data.nome || 'bolsista'} referente a ${data.mesano || ''} enviado via formulário da Plataforma mareIA.`,
       attachments: [
@@ -151,7 +144,12 @@ export default async function handler(req, res) {
       ],
     });
 
-    res.status(200).json({ ok: true, filename });
+    // Retorna o docx em base64 para download no navegador
+    res.status(200).json({
+      ok: true,
+      filename,
+      docx: docxBuffer.toString('base64'),
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: err.message });

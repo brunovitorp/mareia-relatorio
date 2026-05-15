@@ -321,10 +321,20 @@
     </div>
   </div>
 
+  <!-- Email para cópia -->
+  <div class="card">
+    <div class="card-title">Cópia do relatório</div>
+    <div class="field">
+      <label>Seu e-mail (para receber uma cópia)</label>
+      <input type="text" id="email-copia" placeholder="seuemail@exemplo.com">
+      <p class="hint">Opcional. O documento também será enviado para este endereço.</p>
+    </div>
+  </div>
+
   <div class="submit-area">
     <button id="submit-btn" onclick="enviar()">Enviar relatório</button>
     <p id="status-msg"></p>
-    <p class="hint" style="margin-top:.5rem">O documento será gerado e enviado para bruno.pires@nutes.ufpe.br</p>
+    <p class="hint" style="margin-top:.5rem">O documento será baixado automaticamente e enviado para gestao@nutes.ufpe.br</p>
   </div>
 
 </main>
@@ -424,6 +434,7 @@ function coletarDados() {
     projetoDecl: val('projeto-decl'),
     local: val('local'),
     dataAssin: val('data-assin'),
+    emailCopia: val('email-copia'),
   };
 }
 
@@ -431,6 +442,29 @@ function setStatus(msg, type) {
   const el = document.getElementById('status-msg');
   el.textContent = msg;
   el.className = type || '';
+}
+
+function limparFormulario() {
+  ['nome','cpf','mesano','projeto','objetivos','conclusao','valor','projeto-decl','local','data-assin','email-copia'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.getElementById('semanas-container').innerHTML = '';
+  document.getElementById('desafios-container').innerHTML = '';
+  document.getElementById('passos-container').innerHTML = '';
+  semanaCount = 0; desafioCount = 0; passoCount = 0;
+  addSemana(); addDesafio(); addPasso();
+}
+
+function baixarDocx(b64, filename) {
+  const bytes = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+  const blob = new Blob([bytes], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
 }
 
 async function enviar() {
@@ -454,10 +488,12 @@ async function enviar() {
 
     if (!res.ok) throw new Error(json.error || 'Erro desconhecido');
 
-    setStatus('✓ Relatório enviado com sucesso para gestao@nutes.ufpe.br', 'ok');
-    btn.disabled = false;
+    baixarDocx(json.docx, json.filename);
+    setStatus('✓ Relatório enviado e baixado com sucesso!', 'ok');
+    limparFormulario();
   } catch (err) {
     setStatus('Erro: ' + err.message, 'err');
+  } finally {
     btn.disabled = false;
   }
 }
