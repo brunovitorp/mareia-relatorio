@@ -139,7 +139,7 @@ export default async function handler(req, res) {
 
     await transporter.sendMail({
       from: `"Plataforma mareIA" <${process.env.GMAIL_USER}>`,
-      to: 'gestao@nutes.ufpe.br',
+      to: 'bruno.pires@nutes.ufpe.br',
       subject: `Relatório Mensal — ${data.nome || 'Bolsista'} — ${data.mesano || ''}`,
       text: `Relatório mensal de ${data.nome || 'bolsista'} referente a ${data.mesano || ''} enviado via formulário da Plataforma mareIA.`,
       attachments: [
