@@ -106,7 +106,7 @@ async function buildDocx(data) {
   docXml = docXml.replace('{{PROJETO_DECL}}', escape(data.projetoDecl || 'XXXXXXXX'));
   docXml = docXml.replace('{{LOCAL}}', escape(data.local || '_____________'));
   docXml = docXml.replace('{{DATA}}', escape(data.dataAssin || '___ de ____________ de 202__'));
-  docXml = docXml.replace('{{ATIVIDADES_BLOCO}}', buildAtividadesBloco(data));
+  docXml = docXml.replace(/<w:p[^>]*>(?:[^<]|<(?!\/w:p>))*\{\{ATIVIDADES_BLOCO\}\}(?:[^<]|<(?!\/w:p>))*<\/w:p>/s, buildAtividadesBloco(data));
 
   zip.file('word/document.xml', docXml);
   return zip.generateAsync({ type: 'nodebuffer', compression: 'DEFLATE' });
