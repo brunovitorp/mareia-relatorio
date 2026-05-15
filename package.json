@@ -1,0 +1,9 @@
+{
+  "name": "mareia-relatorio",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "jszip": "^3.10.1",
+    "nodemailer": "^6.9.13"
+  }
+}

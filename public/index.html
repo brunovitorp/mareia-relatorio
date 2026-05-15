@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Relatório Mensal — Plataforma mareIA</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --blue: #001F5F;
+    --blue-light: #8DB3E2;
+    --blue-mid: #2E5B9E;
+    --bg: #F4F6FB;
+    --surface: #FFFFFF;
+    --border: #D0D9EC;
+    --text: #1A1A2E;
+    --muted: #5A6380;
+    --danger: #C0392B;
+    --success: #1A7A4A;
+    --radius: 10px;
+    --shadow: 0 1px 4px rgba(0,31,95,.08);
+  }
+
+  body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 15px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  header {
+    background: var(--blue);
+    color: #fff;
+    padding: 1.25rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  header h1 {
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: .02em;
+  }
+
+  header p {
+    font-size: .8rem;
+    opacity: .75;
+    margin-top: 2px;
+  }
+
+  .logo-dot {
+    width: 36px;
+    height: 36px;
+    background: var(--blue-light);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: .85rem;
+    color: var(--blue);
+    flex-shrink: 0;
+  }
+
+  main {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 2rem 1rem 4rem;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    margin-bottom: 1.25rem;
+    box-shadow: var(--shadow);
+  }
+
+  .card-title {
+    font-size: .7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--blue-mid);
+    margin-bottom: 1.25rem;
+    padding-bottom: .6rem;
+    border-bottom: 2px solid var(--blue-light);
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+  }
+
+  .card-title span.num {
+    background: var(--blue);
+    color: #fff;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .65rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .field { margin-bottom: 1rem; }
+  .field:last-child { margin-bottom: 0; }
+
+  label {
+    display: block;
+    font-size: .8rem;
+    font-weight: 600;
+    color: var(--muted);
+    margin-bottom: .35rem;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+  }
+
+  input[type=text], input[type=month], textarea, select {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: .55rem .8rem;
+    font-size: .95rem;
+    font-family: inherit;
+    color: var(--text);
+    background: #FAFBFD;
+    transition: border-color .15s, box-shadow .15s;
+    outline: none;
+  }
+
+  input:focus, textarea:focus {
+    border-color: var(--blue-mid);
+    box-shadow: 0 0 0 3px rgba(46,91,158,.12);
+    background: #fff;
+  }
+
+  textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
+
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  @media (max-width: 540px) { .row2 { grid-template-columns: 1fr; } }
+
+  .block {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: .85rem;
+    background: #F8FAFD;
+    position: relative;
+  }
+
+  .block-label {
+    font-size: .72rem;
+    font-weight: 700;
+    color: var(--blue-mid);
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    margin-bottom: .85rem;
+  }
+
+  .remove-btn {
+    position: absolute;
+    top: .6rem;
+    right: .6rem;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--muted);
+    cursor: pointer;
+    width: 26px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: .95rem;
+    line-height: 1;
+    transition: all .15s;
+  }
+
+  .remove-btn:hover { background: #FDECEA; border-color: #E57373; color: var(--danger); }
+
+  .add-btn {
+    width: 100%;
+    border: 1.5px dashed var(--border);
+    border-radius: 8px;
+    background: none;
+    color: var(--muted);
+    padding: .6rem;
+    cursor: pointer;
+    font-size: .85rem;
+    font-family: inherit;
+    transition: all .15s;
+    margin-top: .25rem;
+  }
+
+  .add-btn:hover {
+    border-color: var(--blue-mid);
+    color: var(--blue-mid);
+    background: rgba(46,91,158,.04);
+  }
+
+  .submit-area {
+    text-align: center;
+    margin-top: 2rem;
+  }
+
+  #submit-btn {
+    background: var(--blue);
+    color: #fff;
+    border: none;
+    border-radius: 9px;
+    padding: .85rem 2.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .15s, transform .1s;
+    letter-spacing: .02em;
+  }
+
+  #submit-btn:hover { background: var(--blue-mid); }
+  #submit-btn:active { transform: scale(.98); }
+  #submit-btn:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+
+  #status-msg {
+    margin-top: 1rem;
+    font-size: .9rem;
+    min-height: 22px;
+    font-weight: 500;
+  }
+
+  #status-msg.ok { color: var(--success); }
+  #status-msg.err { color: var(--danger); }
+
+  .hint {
+    font-size: .78rem;
+    color: var(--muted);
+    margin-top: .3rem;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-dot">mA</div>
+  <div>
+    <h1>Relatório Mensal de Acompanhamento de Atividades</h1>
+    <p>Plataforma mareIA — NUTES/UFPE</p>
+  </div>
+</header>
+
+<main>
+
+  <!-- Dados Gerais -->
+  <div class="card">
+    <div class="card-title">Dados gerais</div>
+    <div class="field"><label>Nome completo do(a) bolsista</label><input type="text" id="nome" placeholder="Nome completo"></div>
+    <div class="row2">
+      <div class="field"><label>CPF do bolsista</label><input type="text" id="cpf" placeholder="000.000.000-00"></div>
+      <div class="field"><label>Mês e ano de referência</label><input type="month" id="mesano"></div>
+    </div>
+    <div class="field">
+      <label>Nome do projeto e grupo de trabalho / meta / fase</label>
+      <input type="text" id="projeto" placeholder="Ex: Plataforma mareIA — GT Tecnologia">
+    </div>
+  </div>
+
+  <!-- 1. Objetivos -->
+  <div class="card">
+    <div class="card-title"><span class="num">1</span> Objetivos do mês</div>
+    <div class="field">
+      <textarea id="objetivos" rows="4" placeholder="Descreva os objetivos planejados para o período. Use uma linha por objetivo."></textarea>
+      <p class="hint">Cada linha vira um item de lista no documento.</p>
+    </div>
+  </div>
+
+  <!-- 2. Atividades por semana -->
+  <div class="card">
+    <div class="card-title"><span class="num">2</span> Atividades desenvolvidas</div>
+    <div id="semanas-container"></div>
+    <button class="add-btn" onclick="addSemana()">+ Adicionar semana</button>
+  </div>
+
+  <!-- 3. Desafios -->
+  <div class="card">
+    <div class="card-title"><span class="num">3</span> Desafios enfrentados</div>
+    <div id="desafios-container"></div>
+    <button class="add-btn" onclick="addDesafio()">+ Adicionar desafio</button>
+  </div>
+
+  <!-- 4. Conclusão -->
+  <div class="card">
+    <div class="card-title"><span class="num">4</span> Conclusão</div>
+    <div class="field">
+      <textarea id="conclusao" rows="5" placeholder="Resumo do período, resultados gerais e avaliação do mês..."></textarea>
+    </div>
+  </div>
+
+  <!-- 5. Próximos passos -->
+  <div class="card">
+    <div class="card-title"><span class="num">5</span> Próximos passos</div>
+    <div id="passos-container"></div>
+    <button class="add-btn" onclick="addPasso()">+ Adicionar próximo passo</button>
+  </div>
+
+  <!-- Declaração -->
+  <div class="card">
+    <div class="card-title">Declaração de recebimento</div>
+    <div class="row2">
+      <div class="field"><label>Valor da bolsa (R$)</label><input type="text" id="valor" placeholder="1.500,00"></div>
+      <div class="field"><label>Nome do projeto (declaração)</label><input type="text" id="projeto-decl" placeholder="Plataforma mareIA"></div>
+    </div>
+    <div class="row2">
+      <div class="field"><label>Local</label><input type="text" id="local" placeholder="Recife"></div>
+      <div class="field"><label>Data por extenso</label><input type="text" id="data-assin" placeholder="15 de maio de 2026"></div>
+    </div>
+  </div>
+
+  <div class="submit-area">
+    <button id="submit-btn" onclick="enviar()">Enviar relatório</button>
+    <p id="status-msg"></p>
+    <p class="hint" style="margin-top:.5rem">O documento será gerado e enviado para gestao@nutes.ufpe.br</p>
+  </div>
+
+</main>
+
+<script>
+let semanaCount = 0, desafioCount = 0, passoCount = 0;
+
+function val(id) {
+  const el = document.getElementById(id);
+  return el ? el.value.trim() : '';
+}
+
+function addSemana() {
+  semanaCount++;
+  const n = semanaCount;
+  const c = document.getElementById('semanas-container');
+  const d = document.createElement('div');
+  d.className = 'block'; d.id = 'semana-' + n;
+  d.innerHTML = `
+    <button class="remove-btn" onclick="document.getElementById('semana-${n}').remove()" title="Remover">×</button>
+    <div class="block-label">Semana ${n}</div>
+    <div class="field"><label>Atividade</label><input type="text" id="s-ativ-${n}" placeholder="Nome da atividade"></div>
+    <div class="field"><label>Descrição</label><textarea id="s-desc-${n}" rows="3" placeholder="O que foi feito..."></textarea></div>
+    <div class="field"><label>Resultados</label><textarea id="s-res-${n}" rows="2" placeholder="Resultados obtidos..."></textarea></div>
+  `;
+  c.appendChild(d);
+}
+
+function addDesafio() {
+  desafioCount++;
+  const n = desafioCount;
+  const c = document.getElementById('desafios-container');
+  const d = document.createElement('div');
+  d.className = 'block'; d.id = 'desafio-' + n;
+  d.innerHTML = `
+    <button class="remove-btn" onclick="document.getElementById('desafio-${n}').remove()" title="Remover">×</button>
+    <div class="block-label">Desafio ${n}</div>
+    <div class="field"><label>Desafio</label><input type="text" id="d-tit-${n}" placeholder="Título do desafio"></div>
+    <div class="field"><label>Descrição</label><textarea id="d-desc-${n}" rows="2" placeholder="Descreva o desafio..."></textarea></div>
+    <div class="field"><label>Solução</label><textarea id="d-sol-${n}" rows="2" placeholder="Como foi resolvido..."></textarea></div>
+  `;
+  c.appendChild(d);
+}
+
+function addPasso() {
+  passoCount++;
+  const n = passoCount;
+  const c = document.getElementById('passos-container');
+  const d = document.createElement('div');
+  d.className = 'block'; d.id = 'passo-' + n;
+  d.innerHTML = `
+    <button class="remove-btn" onclick="document.getElementById('passo-${n}').remove()" title="Remover">×</button>
+    <div class="field" style="margin:0"><textarea id="p-txt-${n}" rows="2" placeholder="Próximo passo ${n}..."></textarea></div>
+  `;
+  c.appendChild(d);
+}
+
+function coletarDados() {
+  const semanas = [];
+  for (let i = 1; i <= semanaCount; i++) {
+    if (!document.getElementById('semana-' + i)) continue;
+    semanas.push({
+      atividade: val('s-ativ-' + i),
+      descricao: val('s-desc-' + i),
+      resultados: val('s-res-' + i),
+    });
+  }
+
+  const desafios = [];
+  for (let i = 1; i <= desafioCount; i++) {
+    if (!document.getElementById('desafio-' + i)) continue;
+    desafios.push({
+      titulo: val('d-tit-' + i),
+      descricao: val('d-desc-' + i),
+      solucao: val('d-sol-' + i),
+    });
+  }
+
+  const proximosPassos = [];
+  for (let i = 1; i <= passoCount; i++) {
+    if (!document.getElementById('passo-' + i)) continue;
+    const txt = val('p-txt-' + i);
+    if (txt) proximosPassos.push(txt);
+  }
+
+  return {
+    nome: val('nome'),
+    cpf: val('cpf'),
+    projeto: val('projeto'),
+    mesano: val('mesano'),
+    objetivos: val('objetivos'),
+    semanas,
+    desafios,
+    conclusao: val('conclusao'),
+    proximosPassos,
+    valor: val('valor'),
+    projetoDecl: val('projeto-decl'),
+    local: val('local'),
+    dataAssin: val('data-assin'),
+  };
+}
+
+function setStatus(msg, type) {
+  const el = document.getElementById('status-msg');
+  el.textContent = msg;
+  el.className = type || '';
+}
+
+async function enviar() {
+  const btn = document.getElementById('submit-btn');
+  const data = coletarDados();
+
+  if (!data.nome) { setStatus('Preencha o nome do(a) bolsista.', 'err'); return; }
+  if (!data.mesano) { setStatus('Preencha o mês e ano de referência.', 'err'); return; }
+
+  btn.disabled = true;
+  setStatus('Gerando documento e enviando...');
+
+  try {
+    const res = await fetch('/api/submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+
+    const json = await res.json();
+
+    if (!res.ok) throw new Error(json.error || 'Erro desconhecido');
+
+    setStatus('✓ Relatório enviado com sucesso para gestao@nutes.ufpe.br', 'ok');
+    btn.disabled = false;
+  } catch (err) {
+    setStatus('Erro: ' + err.message, 'err');
+    btn.disabled = false;
+  }
+}
+
+// Inicializa com 1 semana, 1 desafio, 1 passo
+addSemana();
+addDesafio();
+addPasso();
+</script>
+</body>
+</html>
